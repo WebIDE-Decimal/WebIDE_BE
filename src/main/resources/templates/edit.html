@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+</head>
+<body>
+<h1>게시글 수정</h1>
+<!-- 게시글 수정 폼 -->
+<form th:action="@{/posts/{id}(id=${post.id})}" th:object="${post}" method="post">
+    <!-- Thymeleaf는 CSRF 토큰을 자동으로 포함시킵니다. 만약 자동으로 포함되지 않는다면, 명시적으로 추가해야 할 수 있습니다. -->
+    <input type="hidden" name="_method" value="put" /> <!-- HTML 폼은 PUT, DELETE 메소드를 직접 지원하지 않으므로, _method를 사용하여 요청 메소드를 지정합니다. -->
+    <div>
+        <label for="title">제목:</label>
+        <input type="text" id="title" th:field="*{title}" required />
+    </div>
+    <div>
+        <label for="content">내용:</label>
+        <textarea id="content" th:field="*{content}" required></textarea>
+    </div>
+    <div>
+        <button type="submit">수정하기</button>
+    </div>
+</form>
+<div>
+    <a th:href="@{/posts}">목록으로 돌아가기</a>
+</div>
+</body>
+</html>

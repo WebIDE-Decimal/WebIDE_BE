@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <script>
+        var ws;
+
+        window.onload = function() {
+            connect();
+        };
+
+        function connect() {
+            if (ws !== undefined && (ws.readyState !== WebSocket.CLOSED && ws.readyState !== WebSocket.CLOSING)) {
+                console.log('WebSocket is already open or in the process of opening.');
+                return;
+            }
+            ws = new WebSocket('ws://localhost:8080/chat');
+            ws.onopen = function() {
+                console.log('Connected to the server.');
+                var log = document.getElementById('log');
+                log.innerHTML += '- 접속되었습니다 -\n';
+            };
+            ws.onmessage = function(event) {
+                var log = document.getElementById('log');
+                log.innerHTML += event.data + '\n';
+            };
+            ws.onclose = function(event) {
+                console.log('Disconnected from the server.', event);
+                var log = document.getElementById('log');
+                log.innerHTML += '- 연결이 끊겼습니다 -\n';
+            };
+            ws.onerror = function(error) {
+                console.log('WebSocket error: ', error);
+            };
+        }
+
+        function disconnect() {
+            if (ws !== undefined && ws.readyState === WebSocket.OPEN) {
+                ws.close();
+                console.log('Disconnecting...');
+            }
+        }
+
+        function send() {
+            if (ws.readyState === WebSocket.OPEN) {
+                var input = document.getElementById('messageInput');
+                ws.send(input.value);
+                input.value = '';
+            } else {
+                console.log('WebSocket is not open. ReadyState: ', ws.readyState);
+            }
+        }
+    </script>
+</head>
+<body>
+<button onclick="connect()">Connect</button>
+<button onclick="disconnect()">Disconnect</button>
+<textarea id="log" readonly rows="20" cols="50"></textarea><br>
+<input type="text" id="messageInput">
+<button onclick="send()">Send</button>
+</body>
+</html>
